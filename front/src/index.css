@@ -1,68 +1,303 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800&display=swap');
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+*{
+padding: 0;
+margin: 0;
+box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  font-family: 'Poppins';
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+li{
+  list-style: none;  
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+a{
+  text-decoration: none;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
+/* :: 1.0 Backtotop Area CSS */
+.scroll-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #030303;
+    border-radius: 50%;
+    z-index: 30;
+}
+
+/* :: 3.0 Search Form Area */
+.workspace-search-container{
+    transform: translateY(-50%);
+}
+
+/* :: 4.0 Vedio Area */
+.vedio-area{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.vedio-icon{
+    width: 80px;
+    height: 80px;
+    position: relative;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+}
+
+@media only screen and (max-width: 767px) {
+    /* :: Search Form Area */
+    .workspace-search-container{
+        transform: translateY(-45%);
+    }
+
+    /* :: Vedio Area */
+    .vedio-icon{
+        width: 60px;
+        height: 60px;
+        border: 2px solid #ffffff;
+    }
+}
+
+.vedio-icon img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* :: 5.0 Services Area */
+.card {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.card p, .gallery p, .gallery .gal-img{
+    color: transparent;
+}
+
+.card:before, .gallery:before{
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: -50%;
+    right: -50%;
+    background: #030303;
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    transform: scale(1);
+    transform-origin: 50% 50%;
+    transition: transform 0.25s ease-out;
+}
+
+
+/* :: 6.0 Gallery Area */
+.gallery:before{
+    z-index: 1;
+}
+
+.gallery:before{
+    background: rgba(10, 10, 10, 0.3);
+}
+
+figure {
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    transition: background 0.25s ease-out;
+}
+
+.card:hover:before, .gallery:hover:before{
+    transform: scale(30);
+}
+
+.gallery:hover .bg-img{
+    transform: scale(1.2);
+    transition: all 0.3s ease-out;
+}
+
+.card:hover p, .gallery:hover p, .gallery:hover .gal-img{
+    transition: all 0.3s ease-out;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.card:hover h3 {
+    transition: all 0.3s ease-out;
+    color: #ffffff;
+}
+
+.card svg {
+    fill: #030303;
+    width: 50px;
+    height: 50px;
+    transition: fill 0.3s ease;
+}
+
+.card:hover svg {
+    fill: #030303;
+}
+
+.card:hover figure {
     background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+}
+
+/* :: 4.0 Heading Area CSS */
+.section-heading {
+    position: relative;
+    z-index: 1;
+}
+.section-heading h6 {
+    text-transform: uppercase;
+    color: #888F96;
+    letter-spacing: 2px;
+    display: block;
+}
+.section-heading h2 {
+    text-transform: capitalize;
+    display: block;
+    line-height: 1.2;
+}
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .section-heading h2 {
+        font-size: 36px;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .section-heading h2 {
+        font-size: 30px;
+    }
+}
+@media only screen and (max-width: 767px) {
+    .section-heading h2 {
+        font-size: 24px;
+    }
+}
+.section-heading.white h6,
+.section-heading.white h2 {
+    color: #ffffff;
+}
+
+/* :: 13.0 Testimonial Area CSS */
+.coworking-testimonials-area {
+    position: relative;
+    z-index: 1;
+}
+.coworking-testimonials-area .testimonial-thumbnail {
+    position: relative;
+    z-index: 1;
+}
+.coworking-testimonials-area .testimonial-thumbnail img {
+    border-radius: 8px;
+    width: 100% !important;
+}
+.coworking-testimonials-area .single-testimonial-slide h5 {
+    color: #636a76;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 2;
+}
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .coworking-testimonials-area .single-testimonial-slide h5 {
+        font-size: 16px;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .coworking-testimonials-area .single-testimonial-slide h5 {
+        font-size: 16px;
+    }
+}
+@media only screen and (max-width: 767px) {
+    .coworking-testimonials-area .single-testimonial-slide h5 {
+        font-size: 14px;
+    }
+}
+.coworking-testimonials-area .single-testimonial-slide .rating-title {
+    position: relative;
+    z-index: 1;
+    margin-top: 15px;
+}
+.coworking-testimonials-area .single-testimonial-slide .rating-title .rating {
+    display: block;
+    margin-bottom: 10px;
+}
+.coworking-testimonials-area .single-testimonial-slide .rating-title .rating i {
+    color: #f5b917;
+    font-size: 14px;
+}
+.coworking-testimonials-area .single-testimonial-slide .rating-title h6 {
+    margin-bottom: 0;
+}
+.coworking-testimonials-area .single-testimonial-slide .rating-title h6 span {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.single-testimonial-area {
+    position: relative;
+    z-index: 1;
+}
+.single-testimonial-area .testimonial-content {
+    transition-duration: 500ms;
+    position: relative;
+    z-index: 1;
+    padding: 40px;
+    border-radius: 3px;
+    box-shadow: 0 15px 9px 0 rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+}
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .single-testimonial-area .testimonial-content {
+        padding: 30px;
+    }
+}
+@media only screen and (max-width: 767px) {
+    .single-testimonial-area .testimonial-content {
+        padding: 30px;
+    }
+}
+.single-testimonial-area .testimonial-content .ratings-icon {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px;
+}
+.single-testimonial-area .testimonial-content .ratings-icon .rating {
+    color: #f3b409;
+}
+.single-testimonial-area .testimonial-content h5 {
+    -webkit-transition-duration: 500ms;
+    -o-transition-duration: 500ms;
+    transition-duration: 500ms;
+    margin-bottom: 0;
+    color: #707070;
+    line-height: 1.5;
+    font-weight: 400;
+}
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+    .single-testimonial-area .testimonial-content h5 {
+        font-size: 16px;
+    }
+}
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    .single-testimonial-area .testimonial-content h5 {
+        font-size: 16px;
+    }
+}
+@media only screen and (max-width: 767px) {
+    .single-testimonial-area .testimonial-content h5 {
+        font-size: 16px;
+    }
 }
