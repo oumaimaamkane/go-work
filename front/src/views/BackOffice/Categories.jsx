@@ -137,66 +137,55 @@ export default function Categories() {
       )}
 
       <div className="bg-white dark:bg-neutral-700 p-6 rounded-lg shadow-lg">
-        <table className="table-auto w-full text-left border">
-          <thead>
-            <tr className="bg-gray-100 dark:bg-neutral-600">
-              <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-medium">
-                Name
-              </th>
-              <th
-                className="px-4 py-3 text-gray-800 dark:text-gray-100 font-medium text-center border-l-2 dark:border-neutral-300"
-                style={{ width: "80px" }}
-              >
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody className="dark:border-neutral-300">
-            {CategoriesPerPage.map((category) => (
-              <tr
-                key={category.id}
-                className="hover:bg-gray-50 dark:hover:bg-neutral-600 transition duration-200"
-              >
-                <td className="border px-6 py-4 dark:border-neutral-500 dark:text-gray-300">
-                  {category.name}
-                </td>
-                <td
-                  className="py-5 px-8 border flex justify-center items-center gap-6 dark:border-neutral-500"
-                  style={{ width: "85px" }}
+      <table className="min-w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 shadow-sm rounded-lg">
+        <thead>
+          <tr className="bg-gray-100 dark:bg-neutral-800">
+            <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-left">#</th>
+            <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-left">Name</th>
+            <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-center border-l dark:border-neutral-700">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {CategoriesPerPage.map((category, index) => (
+            <tr key={category.id} className="hover:bg-gray-50 border-t dark:hover:bg-neutral-700 transition-colors duration-200">
+              <td className="px-6 py-3 dark:border-neutral-700 dark:text-gray-300">{index + 1}</td>
+              <td className="px-6 py-3 dark:border-neutral-700 dark:text-gray-300">{category.name}</td>
+              <td className="px-6 py-3 dark:border-neutral-700 flex justify-center items-center gap-3">
+                <button
+                  aria-label="Update"
+                  className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-600 transition-colors p-1 rounded-full hover:bg-blue-50 dark:hover:bg-neutral-800"
+                  onClick={() => {
+                    setIsUpdateModalOpen(true);
+                    setUpdatingCategoryName(category.name);
+                    setUpdatingCategoryId(category.id);
+                  }}
                 >
-                  <button
-                    aria-label="Update"
-                    className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-600"
-                    onClick={() => {
-                      setIsUpdateModalOpen(true);
-                      setUpdatingCategoryName(category.name);
-                      setUpdatingCategoryId(category.id);
-                    }}
-                  >
-                    <MdModeEdit fontSize={20} />
-                  </button>
-                  <button
-                    aria-label="Delete"
-                    className="text-red-500 hover:text-red-700 ml-2 dark:text-red-400 dark:hover:text-red-600"
-                    onClick={() => {
-                      setIsDeleteModalOpen(true);
-                      setDeletingCategoryName(category.name);
-                      setDeletingCategoryId(category.id);
-                    }}
-                  >
-                    <AiFillDelete fontSize={20} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <MdModeEdit fontSize={18} />
+                </button>
+                <button
+                  aria-label="Delete"
+                  className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50 dark:hover:bg-neutral-800"
+                  onClick={() => {
+                    setIsDeleteModalOpen(true);
+                    setDeletingCategoryName(category.name);
+                    setDeletingCategoryId(category.id);
+                  }}
+                >
+                  <AiFillDelete fontSize={18} />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
         {/* Pagination */}
         <div className="flex justify-end gap-8 items-center mt-4">
           <button
             onClick={prevPage}
             disabled={CurrentPage === 1}
-            className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${CurrentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${
+              CurrentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             <ChevronLeftIcon className="h-5 w-5 mr-1" />
             Previous
@@ -207,7 +196,11 @@ export default function Categories() {
           <button
             onClick={nextPage}
             disabled={EndIndex >= categories.length}
-            className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${EndIndex >= categories.length ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${
+              EndIndex >= categories.length
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
           >
             Next
             <ChevronRightIcon className="h-5 w-5 ml-1" />

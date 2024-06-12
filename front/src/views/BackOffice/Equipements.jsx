@@ -105,7 +105,9 @@ export default function Equipements() {
   //DELETE EQUIPEMENTS
   const handleDeleteEquipement = async (equipementId) => {
     try {
-      await axios.delete(`http://127.0.0.1:8000/api/equipements/${equipementId}`);
+      await axios.delete(
+        `http://127.0.0.1:8000/api/equipements/${equipementId}`
+      );
       setEquipements(
         equipements.filter((equipement) => equipement.id !== equipementId)
       );
@@ -137,66 +139,55 @@ export default function Equipements() {
       )}
 
       <div className="bg-white dark:bg-neutral-700 p-6 rounded-lg shadow-lg">
-        <table className="table-auto w-full text-left border">
-          <thead>
-            <tr className="bg-gray-100 dark:bg-neutral-600">
-              <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-medium">
-                Name
-              </th>
-              <th
-                className="px-4 py-3 text-gray-800 dark:text-gray-100 font-medium text-center border-l-2 dark:border-neutral-300"
-                style={{ width: "80px" }}
-              >
-                Action
-              </th>
-            </tr>
-          </thead>
-          <tbody className="dark:border-neutral-300">
-            {EquipementsPerPage.map((equipement) => (
-              <tr
-                key={equipement.id}
-                className="hover:bg-gray-50 dark:hover:bg-neutral-600 transition duration-200"
-              >
-                <td className="border px-6 py-4 dark:border-neutral-500 dark:text-gray-300">
-                  {equipement.name}
-                </td>
-                <td
-                  className="border px-8 py-5 flex justify-center items-center gap-6 dark:border-neutral-500"
-                  style={{ width: "85px" }}
+      <table className="min-w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 shadow-sm rounded-lg">
+        <thead>
+          <tr className="bg-gray-100 dark:bg-neutral-800">
+            <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-left">#</th>
+            <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-left">Name</th>
+            <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-center border-l dark:border-neutral-700">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {EquipementsPerPage.map((equipement, index) => (
+            <tr key={equipement.id} className="hover:bg-gray-50 border-t dark:hover:bg-neutral-700 transition-colors duration-200">
+              <td className="px-6 py-3 dark:border-neutral-700 dark:text-gray-300">{index + 1}</td>
+              <td className="px-6 py-3 dark:border-neutral-700 dark:text-gray-300">{equipement.name}</td>
+              <td className="px-6 py-3 dark:border-neutral-700 flex justify-center items-center gap-3">
+                <button
+                  aria-label="Update"
+                  className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-600 transition-colors p-1 rounded-full hover:bg-blue-50 dark:hover:bg-neutral-800"
+                  onClick={() => {
+                    setIsUpdateModalOpen(true);
+                    setUpdatingEquipementName(equipement.name);
+                    setUpdatingEquipementId(equipement.id);
+                  }}
                 >
-                  <button
-                    aria-label="Update"
-                    className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-600"
-                    onClick={() => {
-                      setIsUpdateModalOpen(true);
-                      setUpdatingEquipementName(equipement.name);
-                      setUpdatingEquipementId(equipement.id);
-                    }}
-                  >
-                    <MdModeEdit fontSize={20} />
-                  </button>
-                  <button
-                    aria-label="Delete"
-                    className="text-red-500 hover:text-red-700 ml-2 dark:text-red-400 dark:hover:text-red-600"
-                    onClick={() => {
-                      setIsDeleteModalOpen(true);
-                      setDeletingEquipementName(equipement.name);
-                      setDeletingEquipementId(equipement.id);
-                    }}
-                  >
-                    <AiFillDelete fontSize={20} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <MdModeEdit fontSize={18} />
+                </button>
+                <button
+                  aria-label="Delete"
+                  className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-600 transition-colors p-1 rounded-full hover:bg-red-50 dark:hover:bg-neutral-800"
+                  onClick={() => {
+                    setIsDeleteModalOpen(true);
+                    setDeletingEquipementName(equipement.name);
+                    setDeletingEquipementId(equipement.id);
+                  }}
+                >
+                  <AiFillDelete fontSize={18} />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
         {/* Pagination */}
         <div className="flex justify-end gap-8 items-center mt-4">
           <button
             onClick={prevPage}
             disabled={CurrentPage === 1}
-            className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${CurrentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${
+              CurrentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             <ChevronLeftIcon className="h-5 w-5 mr-1" />
             Previous
@@ -207,7 +198,11 @@ export default function Equipements() {
           <button
             onClick={nextPage}
             disabled={EndIndex >= equipements.length}
-            className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${EndIndex >= equipements.length ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${
+              EndIndex >= equipements.length
+                ? "opacity-50 cursor-not-allowed"
+                : ""
+            }`}
           >
             Next
             <ChevronRightIcon className="h-5 w-5 ml-1" />
@@ -301,7 +296,10 @@ export default function Equipements() {
               <button
                 className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
                 onClick={() =>
-                  handleUpdateEquipement(UpdatingEquipementId, UpdatingEquipementName)
+                  handleUpdateEquipement(
+                    UpdatingEquipementId,
+                    UpdatingEquipementName
+                  )
                 }
               >
                 Save
@@ -350,7 +348,10 @@ export default function Equipements() {
               <button
                 className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
                 onClick={() =>
-                  handleDeleteEquipement(DeletingEquipementId, DeletingEquipementName)
+                  handleDeleteEquipement(
+                    DeletingEquipementId,
+                    DeletingEquipementName
+                  )
                 }
               >
                 Delete

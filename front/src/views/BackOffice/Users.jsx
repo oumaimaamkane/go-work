@@ -8,22 +8,19 @@ import axios from "axios";
 
 export default function Users() {
   const [isBannModalOpen, setIsBannModalOpen] = useState(false);
-  const [BanningUserName, setBanningUserName] = useState("");
-  const [BanningUserId, setBanningUserId] = useState("");
+  const [banningUserName, setBanningUserName] = useState("");
+  const [banningUserId, setBanningUserId] = useState("");
   const [isUnBannModalOpen, setIsUnBannModalOpen] = useState(false);
-  const [UnBanningUserName, setUnBanningUserName] = useState("");
-  const [UnBanningUserId, setUnBanningUserId] = useState("");
+  const [unBanningUserName, setUnBanningUserName] = useState("");
+  const [unBanningUserId, setUnBanningUserId] = useState("");
   const [success, setSuccess] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  //PAGINATION
-  const items = 4;
-  const [CurrentPage, setCurrentPage] = useState(1);
-  const NbPage = Math.ceil(users.length / items);
-  const StartIndex = (CurrentPage - 1) * items;
-  const EndIndex = StartIndex + items;
-  const UsersPerPage = users.slice(StartIndex, EndIndex);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState("unbanned");
+  const itemsPerPage = 4;
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -40,7 +37,12 @@ export default function Users() {
     fetchUsers();
   }, []);
 
-  // Pagination functions
+  const filteredUsers = users.filter(
+    (user) =>
+      (activeTab === "unbanned" && !user.is_banned) ||
+      (activeTab === "banned" && user.is_banned)
+  );
+
   const nextPage = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
@@ -48,6 +50,10 @@ export default function Users() {
   const prevPage = () => {
     setCurrentPage((prevPage) => prevPage - 1);
   };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const usersToShow = filteredUsers.slice(startIndex, endIndex);
 
   if (loading) {
     return (
@@ -57,15 +63,14 @@ export default function Users() {
     );
   }
 
-  // BANN USER
   const handleBannUser = async () => {
     try {
-      await axios.patch(`http://127.0.0.1:8000/api/users/${BanningUserId}`, {
+      await axios.patch(`http://127.0.0.1:8000/api/users/${banningUserId}`, {
         is_banned: true,
       });
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === BanningUserId ? { ...user, is_banned: true } : user
+          user.id === banningUserId ? { ...user, is_banned: true } : user
         )
       );
       setIsBannModalOpen(false);
@@ -76,24 +81,23 @@ export default function Users() {
     }
   };
 
-// UNBANN USER
-const handleUnBannUser = async () => {
-  try {
-    await axios.patch(`http://127.0.0.1:8000/api/users/${UnBanningUserId}`, {
-      is_banned: false,
-    });
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === UnBanningUserId ? { ...user, is_banned: false } : user
-      )
-    );
-    setIsUnBannModalOpen(false);
-    setSuccess("User unbanned successfully!");
-    setTimeout(() => setSuccess(""), 2000);
-  } catch (error) {
-    setError("Failed to unban user. Please try again.");
-  }
-};
+  const handleUnBannUser = async () => {
+    try {
+      await axios.patch(`http://127.0.0.1:8000/api/users/${unBanningUserId}`, {
+        is_banned: false,
+      });
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === unBanningUserId ? { ...user, is_banned: false } : user
+        )
+      );
+      setIsUnBannModalOpen(false);
+      setSuccess("User unbanned successfully!");
+      setTimeout(() => setSuccess(""), 2000);
+    } catch (error) {
+      setError("Failed to unban user. Please try again.");
+    }
+  };
 
   return (
     <div className="p-6 min-h-screen dark:bg-neutral-800">
@@ -102,79 +106,108 @@ const handleUnBannUser = async () => {
           List des Users
         </span>
       </div>
+
       {success && (
         <div className="bg-green-100 dark:bg-green-200 text-green-800 dark:text-green-900 p-4 rounded-lg shadow-md mb-4">
           {success}
         </div>
       )}
 
-      <div className="bg-white dark:bg-neutral-700 p-6 rounded-lg shadow-lg">
+      <div className="bg-white dark:bg-neutral-700 px-6 py-2 rounded-lg shadow-lg">
+        {/* Tabs */}
+        <div className="flex justify-start mb-1">
+          <button
+            className={`px-6 py-2 rounded-tl-lg font-medium ${
+              activeTab === "unbanned"
+                ? "bg-gray-500 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            } transition duration-200`}
+            onClick={() => setActiveTab("unbanned")}
+            aria-selected={activeTab === "unbanned"}
+          >
+            Unbanned
+          </button>
+          <button
+            className={`px-6 py-2 rounded-tr-lg font-medium ${
+              activeTab === "banned"
+                ? "bg-gray-500 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            } transition duration-200`}
+            onClick={() => setActiveTab("banned")}
+            aria-selected={activeTab === "banned"}
+          >
+            Banned
+          </button>
+        </div>
+
         <table className="table-auto w-full text-left border">
           <thead>
-            <tr className="bg-gray-100 dark:bg-neutral-600">
-              <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-medium">
+            <tr className="bg-gray-100 dark:bg-neutral-800">
+              <th className="px-4 py-2 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-center">
+                #
+              </th>
+              <th className="px-4 py-2 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-center">
                 Image
               </th>
-              <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-medium">
+              <th className="px-4 py-2 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-left">
                 Name
               </th>
-              <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-medium">
+              <th className="px-4 py-2 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-left">
                 Email
               </th>
-              <th className="px-6 py-3 text-gray-800 dark:text-gray-100 font-medium">
+              <th className="px-4 py-2 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-left">
                 Phone
               </th>
-              <th
-                className="px-4 py-3 text-gray-800 dark:text-gray-100 font-medium text-center border-l-2 dark:border-neutral-300"
-                style={{ width: "80px" }}
-              >
+              <th className="px-4 py-2 text-gray-800 dark:text-gray-100 font-semibold text-xs tracking-wide text-center dark:border-neutral-700">
                 Action
               </th>
             </tr>
           </thead>
           <tbody className="dark:border-neutral-300">
-            {UsersPerPage.map((user) => (
+            {usersToShow.map((user, index) => (
               <tr
                 key={user.id}
-                className="hover:bg-gray-50 dark:hover:bg-neutral-600 transition duration-200"
+                className="hover:bg-gray-50 border dark:hover:bg-neutral-600 transition duration-200"
               >
-                <td className="border pl-7 py-2 w-4 dark:border-neutral-500 dark:text-gray-300">
-                <img className="h-10 w-10 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                <td className="px-4 py-2 dark:text-gray-300 text-center">
+                  {startIndex + index + 1}
                 </td>
-                <td className="border px-3 py-2 w-13 dark:border-neutral-500 dark:text-gray-300">
+                <td className="px-4 py-2 dark:text-gray-300 flex justify-center">
+                  <img
+                    className="h-10 w-10 flex-none rounded-full bg-gray-50"
+                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    alt=""
+                  />
+                </td>
+                <td className="px-3 py-2 w-13 dark:text-gray-300">
                   {user.name}
                 </td>
-                <td className="border px-3 py-2 dark:border-neutral-500 dark:text-gray-300">
-                  {user.email}
-                </td>
-                <td className="border px-3 py-2 dark:border-neutral-500 dark:text-gray-300">
-                  {user.phone}
-                </td>
-                <td className="border dark:border-neutral-500 dark:text-gray-300 text-center">
+                <td className="px-3 py-2 dark:text-gray-300">{user.email}</td>
+                <td className="px-3 py-2 dark:text-gray-300">{user.phone}</td>
+                <td className="dark:text-gray-300 text-center">
                   {user.is_banned ? (
                     <button
                       aria-label="Unban"
-                      className="text-green-500  hover:text-green-700 dark:text-green-400 dark:hover:text-green-600"
+                      className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-600"
                       onClick={() => {
                         setIsUnBannModalOpen(true);
                         setUnBanningUserName(user.name);
                         setUnBanningUserId(user.id);
                       }}
                     >
-                    
-                      <LuBadgePlus fontSize={25} />
+                      <LuBadgeX fontSize={25} />
                     </button>
                   ) : (
                     <button
                       aria-label="Ban"
-                      className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-600"
+                      className="text-green-500  hover:text-green-700 dark:text-green-400 dark:hover:text-green-600"
                       onClick={() => {
                         setIsBannModalOpen(true);
                         setBanningUserName(user.name);
                         setBanningUserId(user.id);
                       }}
                     >
-                       <LuBadgeX fontSize={25} /> 
+                      <LuBadgePlus fontSize={25} />
                     </button>
                   )}
                 </td>
@@ -182,26 +215,30 @@ const handleUnBannUser = async () => {
             ))}
           </tbody>
         </table>
+
         {/* Pagination */}
         <div className="flex justify-end gap-8 items-center mt-4">
           <button
             onClick={prevPage}
-            disabled={CurrentPage === 1}
+            disabled={currentPage === 1}
             className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${
-              CurrentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+              currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
             <ChevronLeftIcon className="h-5 w-5 mr-1" />
             Previous
           </button>
           <div className="text-gray-600 dark:text-gray-200">
-            Page {CurrentPage} of {NbPage}
+            Page {currentPage} of{" "}
+            {Math.ceil(filteredUsers.length / itemsPerPage)}
           </div>
           <button
             onClick={nextPage}
-            disabled={EndIndex >= users.length}
+            disabled={endIndex >= filteredUsers.length}
             className={`flex items-center text-gray-600 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 cursor-pointer ${
-              EndIndex >= users.length ? "opacity-50 cursor-not-allowed" : ""
+              endIndex >= filteredUsers.length
+                ? "opacity-50 cursor-not-allowed"
+                : ""
             }`}
           >
             Next
@@ -210,6 +247,7 @@ const handleUnBannUser = async () => {
         </div>
       </div>
 
+      {/* Bann Modal */}
       {isBannModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center transition-opacity duration-300">
           <div className="bg-white dark:bg-neutral-700 p-6 rounded-lg shadow-lg w-1/3 relative">
@@ -227,7 +265,7 @@ const handleUnBannUser = async () => {
             </h2>
             <h2 className="text-md mb-4 dark:text-white">
               Are you sure you want to bann{" "}
-              <span className="text-red-500 font-bold">{BanningUserName}</span>{" "}
+              <span className="text-red-500 font-bold">{banningUserName}</span>{" "}
               ?
             </h2>
             {error && (
@@ -235,26 +273,25 @@ const handleUnBannUser = async () => {
                 <BiCommentError /> {error}
               </div>
             )}
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end">
               <button
-                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg mr-2"
-                onClick={() => {
-                  setIsBannModalOpen(false);
-                  setError("");
-                }}
+                onClick={() => setIsBannModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-neutral-600 dark:text-gray-300 rounded-md mr-2"
               >
                 Cancel
               </button>
               <button
-                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                onClick={() => handleBannUser(BanningUserId, BanningUserName)}
+                onClick={handleBannUser}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md"
               >
-                Bann
+                Confirm
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* UnBann Modal */}
       {isUnBannModalOpen && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center transition-opacity duration-300">
           <div className="bg-white dark:bg-neutral-700 p-6 rounded-lg shadow-lg w-1/3 relative">
@@ -272,7 +309,9 @@ const handleUnBannUser = async () => {
             </h2>
             <h2 className="text-md mb-4 dark:text-white">
               Are you sure you want to Unbann{" "}
-              <span className="text-green-500 font-bold">{UnBanningUserName}</span>{" "}
+              <span className="text-green-500 font-bold">
+                {unBanningUserName}
+              </span>{" "}
               ?
             </h2>
             {error && (
@@ -280,24 +319,28 @@ const handleUnBannUser = async () => {
                 <BiCommentError /> {error}
               </div>
             )}
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end">
               <button
-                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg mr-2"
-                onClick={() => {
-                  setIsUnBannModalOpen(false);
-                  setError("");
-                }}
+                onClick={() => setIsUnBannModalOpen(false)}
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-neutral-600 dark:text-gray-300 rounded-md mr-2"
               >
                 Cancel
               </button>
               <button
-                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
-                onClick={() => handleUnBannUser(UnBanningUserId, UnBanningUserName)}
+                onClick={handleUnBannUser}
+                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md"
               >
-                UnBann
+                Confirm
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="fixed bottom-5 left-5 bg-red-100 dark:bg-red-200 text-red-800 dark:text-red-900 p-4 rounded-lg shadow-md flex items-center">
+          <BiCommentError className="mr-2" />
+          <span>{error}</span>
         </div>
       )}
     </div>
